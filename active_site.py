@@ -26,8 +26,7 @@ def get_ligand_by_name(residue_name, model):
 def get_ligand_by_chain(chain_name, model):
     #Extract all ligand residues from given chain name
     global ligands
-    ligands = {}    
-    ligands[chain_name] = []
+    ligands = {chain_name: []}
     chains = model.child_dict
     for protein_res in chains[chain_name].child_list:
         ligands[chain_name].append(protein_res)
@@ -50,16 +49,17 @@ def active_site(ligands, distance, model):
 def save_ligand(structure, filename):
     # Saves ligand to a filename.pdb
     Select = Bio.PDB.Select
+
+
     class LigandSelect(Select):
         def accept_residue(self, residue):
             for group in ligands.values():
-                if residue in group:
-                    return 1
-                else:
-                    return 0
+                return 1 if residue in group else 0
+
+
     io=PDBIO()
     io.set_structure(structure)
-    io.save(filename+'.pdb', LigandSelect())
+    io.save(f'{filename}.pdb', LigandSelect())
 
 """
 Example
